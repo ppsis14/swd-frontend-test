@@ -1,35 +1,45 @@
+"use client";
+
 import "./style.scss";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Flex, Card } from "antd";
+import { MENUS } from "./constants/menus";
+import { usePathname } from "next/navigation";
+import Header from "@/components/Header";
 
 export default function Home() {
-  const menus = [
-    { name: "layout", title: "Test 1", subTitle: "Layout & Style" },
-    { name: "connect-api", title: "Test 2", subTitle: "Connect API" },
-    { name: "form", title: "Test 3", subTitle: "Form & Table" },
-  ];
+  const [title, setTitle] = useState<string>("");
+  const currentPathName = usePathname();
+
+  useEffect(() => {
+    if (currentPathName) {
+      let menu = MENUS.find(({ pathName }) => pathName === currentPathName);
+      if (menu) {
+        setTitle(menu.subTitle);
+      }
+    } else setTitle("");
+  }, [currentPathName]);
   return (
-    <div className="page">
-      <main className="main">
-        <Flex
-          className="menu-wrapper"
-          gap="middle"
-          align="center"
-          justify="center"
-        >
-          {menus.map((menu) => (
-            <Link href={`/${menu.name}`}>
-              <Card className="menu">
-                <Flex vertical gap="large">
-                  <p className="menu-name">{menu.title}</p>
-                  <p>{menu.subTitle}</p>
-                </Flex>
-              </Card>
-            </Link>
-          ))}
-        </Flex>
-      </main>
-    </div>
+    <>
+      <Header title={title} />
+      <Flex
+        className="menu-wrapper"
+        gap="middle"
+        align="center"
+        justify="center"
+      >
+        {MENUS.map((menu, idx) => (
+          <Link href={menu.pathName}>
+            <Card key={idx} className="menu">
+              <Flex vertical gap="large">
+                <p className="menu-name">{menu.title}</p>
+                <p>{menu.subTitle}</p>
+              </Flex>
+            </Card>
+          </Link>
+        ))}
+      </Flex>
+    </>
   );
 }

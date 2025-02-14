@@ -6,13 +6,13 @@ type User = {
   title: string;
   firstName: string;
   lastName: string;
-  birthDate?: string;
-  nataionality?: string;
+  birthDate: string;
+  nataionality: string;
   citizenId?: string;
   gender: string;
   mobilePhone: string;
   passportNo?: string;
-  expectedSalary?: string;
+  expectedSalary: string;
 };
 
 interface userState {
