@@ -1,10 +1,13 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { MENUS } from "../constants/menus";
 import Header from "@/components/Header";
 import { Col, Row, Divider, Button, Flex, Tag } from "antd";
+import { useTranslation } from "react-i18next";
+import { pageSelector } from "@/stores/slices/pageSlice";
+import { useSelector } from "react-redux";
 
 type Props = {};
 
@@ -17,7 +20,9 @@ type movePosition = "left" | "right";
 type layoutPosition = "up" | "down";
 
 const page = (props: Props) => {
-  const [title, setTitle] = useState<string>("");
+  // const pageReducer = useSelector(pageSelector);
+  const { t } = useTranslation();
+  // const [title, setTitle] = useState<string>("");
   const [layoutPosition, setLayoutPosition] = useState<layoutPosition>("up");
   const [shapesData, setShapeData] = useState<ShapeData[]>([
     {
@@ -45,14 +50,14 @@ const page = (props: Props) => {
       orderIndex: 5,
     },
   ]);
-  const currentPathName = usePathname();
+  // const currentPathName = usePathname();
 
-  useEffect(() => {
-    if (currentPathName) {
-      let menu = MENUS.find(({ pathName }) => pathName === currentPathName);
-      if (menu) setTitle(menu.subTitle);
-    } else setTitle("");
-  }, [currentPathName]);
+  // useEffect(() => {
+  //   if (currentPathName) {
+  //     let menu = MENUS.find(({ pathName }) => pathName === currentPathName);
+  //     if (menu) setTitle(t(`homePage.menus.${menu.name}.subTitle`));
+  //   } else setTitle("");
+  // }, [currentPathName]);
 
   const controllBtnStyle: React.CSSProperties = {
     width: "100%",
@@ -67,7 +72,6 @@ const page = (props: Props) => {
   };
 
   const shufffleShape = (shapes: ShapeData[]) => {
-    console.log("before shuffle shapes:", shapes);
     for (let i = shapes.length - 1; i > 0; i--) {
       const random = Math.floor(Math.random() * (i + 1));
       [shapes[i], shapes[random]] = [shapes[random], shapes[i]];
@@ -77,7 +81,6 @@ const page = (props: Props) => {
       ...shape,
       orderIndex: idx,
     })) as ShapeData[];
-    console.log("after shuffle shapes:", result);
     setShapeData(result);
   };
   const moveShape = (shapes: ShapeData[], position: movePosition) => {
@@ -91,7 +94,6 @@ const page = (props: Props) => {
       result = [tempShape, ...shapes];
     }
 
-    console.log("after: move shapes:", position, result);
     result = result.map((shape, idx) => ({
       ...shape,
       orderIndex: idx,
@@ -100,12 +102,8 @@ const page = (props: Props) => {
   };
   const movePosition = () => {
     if (layoutPosition === "up") {
-      console.log("is up");
-
       setLayoutPosition("down");
     } else {
-      console.log("is down");
-
       setLayoutPosition("up");
     }
   };
@@ -125,7 +123,8 @@ const page = (props: Props) => {
 
   return (
     <>
-      <Header title={title} />
+      {/* <Header title={title} /> */}
+      <Header />
       <Flex className="menu-wrapper" gap="middle" justify="center">
         <Flex
           className="content-wrapper"
@@ -143,7 +142,9 @@ const page = (props: Props) => {
                 <div className="shape-triangle-left"></div>
               </Button>
               <div className="tag-wrapper">
-                <Tag className="shape-tag">Move shape</Tag>
+                <Tag className="controll-tag">
+                  {t(`layoutPage.movePosition`)}
+                </Tag>
               </div>
             </Col>
             <Col span={12}>
@@ -164,7 +165,9 @@ const page = (props: Props) => {
                 </Button>
               </Row>
               <div className="tag-wrapper">
-                <Tag className="shape-tag">Move position</Tag>
+                <Tag className="controll-tag">
+                  {t(`layoutPage.changeLayout`)}
+                </Tag>
               </div>
             </Col>
             <Col span={6} className="wrapper">
@@ -176,7 +179,9 @@ const page = (props: Props) => {
                 <div className="shape-triangle-right"></div>
               </Button>
               <div className="tag-wrapper">
-                <Tag className="shape-tag">Move shape</Tag>
+                <Tag className="controll-tag">
+                  {t(`layoutPage.movePosition`)}
+                </Tag>
               </div>
             </Col>
           </Row>

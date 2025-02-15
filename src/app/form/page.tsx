@@ -107,14 +107,14 @@ const page = (props: Props) => {
     },
   ];
 
-  useEffect(() => {
-    if (currentPathName) {
-      let menu = MENUS.find(({ pathName }) => pathName === currentPathName);
-      if (menu) {
-        setTitle(menu.subTitle);
-      }
-    } else setTitle("");
-  }, [currentPathName]);
+  // useEffect(() => {
+  //   if (currentPathName) {
+  //     let menu = MENUS.find(({ pathName }) => pathName === currentPathName);
+  //     if (menu) {
+  //       setTitle(menu.subTitle);
+  //     }
+  //   } else setTitle("");
+  // }, [currentPathName]);
 
   const rowSelection: TableProps<DataType>["rowSelection"] = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
@@ -151,7 +151,8 @@ const page = (props: Props) => {
 
   return (
     <>
-      <Header title={title} />
+      {/* <Header title={title} /> */}
+      <Header />
       <main className="container">
         <Form
           form={form}

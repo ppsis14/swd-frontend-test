@@ -2,9 +2,11 @@ import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
 
 import userReducer from "./slices/userSlice";
+import pageReducer from "./slices/pageSlice";
 
 export const store = configureStore({
   reducer: {
+    pageReducer,
     userReducer,
   },
 });
