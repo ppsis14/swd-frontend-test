@@ -21,13 +21,6 @@ const Header = ({ title }: Props) => {
   const { t } = useTranslation();
   const currentPathName = usePathname();
 
-  useEffect(() => {
-    if (currentPathName) {
-      let menu = MENUS.find(({ pathName }) => pathName === currentPathName);
-      if (menu) handleChangeTitle(t(`homePage.menus.${menu.name}.subTitle`));
-    } else handleChangeLanguage("");
-  }, [currentPathName]);
-
   const langOptions = [
     { value: "en", label: pageReducer.currentLang === "en" ? "EN" : "อังกฤษ" },
     { value: "th", label: pageReducer.currentLang === "en" ? "TH" : "ไทย" },
@@ -49,6 +42,10 @@ const Header = ({ title }: Props) => {
     }
     dispatch(updatePageTitle({ value }));
   };
+
+  useEffect(() => {
+    handleChangeTitle();
+  }, [currentPathName]);
 
   return (
     <Flex className="header-wrapper" align="center" justify="space-between">
