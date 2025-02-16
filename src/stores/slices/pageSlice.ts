@@ -23,7 +23,6 @@ const pageSlice = createSlice({
       state.currentLang = action.payload.value;
     },
     updatePageTitle: (state, action) => {
-      console.log("updatePageTitle");
 
       state.title = action.payload.value;
     },

@@ -159,7 +159,6 @@ const page = (props: Props) => {
     selectedRowKeys,
     onChange: (selectedRowKeys: React.Key[]) => {
       setSelectedRowKeys(selectedRowKeys);
-      console.log("selectedRowKeys:", selectedRowKeys);
 
       if (selectedRowKeys.length === userReducer.dataSource.length) {
         dispatch(setSelectedAll({ value: true }));
@@ -171,8 +170,6 @@ const page = (props: Props) => {
       }
     },
   };
-
-  const hasSelected = selectedRowKeys.length > 0;
 
   const onTitleChange = (value: string) => {
     dispatch(setTitle({ value }));
@@ -229,19 +226,51 @@ const page = (props: Props) => {
   };
 
   const onSubmit = () => {
-    if (userReducer.formData.id) {
-      dispatch(
-        updateUser({
-          id: userReducer.formData.id,
-          updatedData: userReducer.formData,
-        })
-      );
-    } else {
-      dispatch(addUser({ userData: userReducer.formData }));
-    }
+    form
+      .validateFields([
+        "title",
+        "firstName",
+        "lastName",
+        "birthDate",
+        "nationality",
+        "gender",
+        "mobilePhoneCode",
+        "mobilePhoneNo",
+        "expectedSalary",
+      ]) // FORM_FIELDS is an array that keeps field names
+      .then(() => {
+        if (userReducer.formData.id) {
+          dispatch(
+            updateUser({
+              id: userReducer.formData.id,
+              updatedData: userReducer.formData,
+            })
+          );
+        } else {
+          dispatch(addUser({ userData: userReducer.formData }));
+        }
 
-    onReset();
-    alert("Save success");
+        onReset();
+        alert("Save success");
+      })
+      .catch((err) => {
+        alert("Save failed, please fill all required fields");
+        return;
+      });
+
+    // if (userReducer.formData.id) {
+    //   dispatch(
+    //     updateUser({
+    //       id: userReducer.formData.id,
+    //       updatedData: userReducer.formData,
+    //     })
+    //   );
+    // } else {
+    //   dispatch(addUser({ userData: userReducer.formData }));
+    // }
+
+    // onReset();
+    // alert("Save success");
   };
 
   const onReset = () => {
@@ -256,20 +285,15 @@ const page = (props: Props) => {
       userReducer.isSelectedAll ||
       selectedRowKeys.length === userReducer.dataSource.length
     ) {
-      console.log("delete all");
-
       dispatch(deleteAllUsers());
       dispatch(setSelectedAll({ value: false }));
       setSelectedRowKeys([]);
     } else {
-      console.log("delete select");
-
       dispatch(deleteUser({ ids }));
 
       let currentSelectedRowKeys = selectedRowKeys.filter(
         (keys) => !ids.includes(keys)
       );
-      console.log("currentSelectedRowKeys:", currentSelectedRowKeys);
 
       setSelectedRowKeys(currentSelectedRowKeys);
     }
@@ -285,7 +309,6 @@ const page = (props: Props) => {
       id: key,
       ...record,
     };
-    console.log("handleEditUser -> formData:", formData);
 
     dispatch(setFormData({ formData }));
 
@@ -324,8 +347,6 @@ const page = (props: Props) => {
   useEffect(() => {
     dispatch(loadUsers());
   }, []);
-
-  console.log("userData:", userReducer.dataSource);
 
   return (
     <>

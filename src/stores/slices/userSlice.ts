@@ -101,7 +101,6 @@ const userSlice = createSlice({
       let currData = [...state.data];
       let userIndex = currData.findIndex(({ id }) => id === action.payload.id);
 
-      console.log("userIndex:", userIndex);
       if (userIndex > -1) {
         currData.splice(userIndex, 1, action.payload.updatedData);
         state.data = currData;
@@ -113,8 +112,6 @@ const userSlice = createSlice({
       }
     },
     deleteUser: (state, action) => {
-      console.log("deleteUser");
-
       state.data = state.data.filter(
         ({ id }) => !action.payload.ids.includes(id)
       );
