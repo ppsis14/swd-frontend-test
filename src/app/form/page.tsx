@@ -508,7 +508,7 @@ const page = (props: Props) => {
             pagination={{
               size: "small",
               position: ["topRight"],
-              pageSize: 2,
+              pageSize: 10,
               itemRender: (_, type, originalElement) => {
                 if (type === "prev") {
                   return (
