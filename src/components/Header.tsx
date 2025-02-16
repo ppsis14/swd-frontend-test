@@ -1,4 +1,3 @@
-// "use client";
 import React, { useEffect } from "react";
 import { pageSelector } from "@/stores/slices/pageSlice";
 import { useAppDispatch, RootState } from "@/stores/store";
@@ -22,8 +21,14 @@ const Header = ({ title }: Props) => {
   const currentPathName = usePathname();
 
   const langOptions = [
-    { value: "en", label: pageReducer.currentLang === "en" ? "EN" : "อังกฤษ" },
-    { value: "th", label: pageReducer.currentLang === "en" ? "TH" : "ไทย" },
+    {
+      value: "en",
+      label: t("header.langMenu.label.en"),
+    },
+    {
+      value: "th",
+      label: t("header.langMenu.label.th"),
+    },
   ];
   const handleChangeLanguage = (value: string) => {
     dispatch(changeLanguage({ value }));
@@ -49,11 +54,11 @@ const Header = ({ title }: Props) => {
 
   return (
     <Flex className="header-wrapper" align="center" justify="space-between">
-      <h2>{pageReducer.title}</h2>
+      <h2>{title ? title : pageReducer.title}</h2>
       <Select
         size="small"
         value={pageReducer.currentLang}
-        style={{ minWidth: "fit-content" }}
+        style={{ width: 100 }}
         onChange={handleChangeLanguage}
         options={langOptions}
       />

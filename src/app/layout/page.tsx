@@ -1,13 +1,9 @@
 "use client";
 
-// import { usePathname } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { MENUS } from "../constants/menus";
+import React, { useState } from "react";
 import Header from "@/components/Header";
 import { Col, Row, Divider, Button, Flex, Tag } from "antd";
 import { useTranslation } from "react-i18next";
-import { pageSelector } from "@/stores/slices/pageSlice";
-import { useSelector } from "react-redux";
 
 type Props = {};
 
@@ -20,9 +16,7 @@ type movePosition = "left" | "right";
 type layoutPosition = "up" | "down";
 
 const page = (props: Props) => {
-  // const pageReducer = useSelector(pageSelector);
   const { t } = useTranslation();
-  // const [title, setTitle] = useState<string>("");
   const [layoutPosition, setLayoutPosition] = useState<layoutPosition>("up");
   const [shapesData, setShapeData] = useState<ShapeData[]>([
     {
@@ -50,14 +44,6 @@ const page = (props: Props) => {
       orderIndex: 5,
     },
   ]);
-  // const currentPathName = usePathname();
-
-  // useEffect(() => {
-  //   if (currentPathName) {
-  //     let menu = MENUS.find(({ pathName }) => pathName === currentPathName);
-  //     if (menu) setTitle(t(`homePage.menus.${menu.name}.subTitle`));
-  //   } else setTitle("");
-  // }, [currentPathName]);
 
   const controllBtnStyle: React.CSSProperties = {
     width: "100%",
