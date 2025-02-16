@@ -2,7 +2,11 @@ import React, { useEffect } from "react";
 import { pageSelector } from "@/stores/slices/pageSlice";
 import { useAppDispatch, RootState } from "@/stores/store";
 import { useSelector } from "react-redux";
-import { changeLanguage, updatePageTitle } from "@/stores/slices/pageSlice";
+import {
+  loadCurrentLang,
+  changeLanguage,
+  updatePageTitle,
+} from "@/stores/slices/pageSlice";
 
 import { Flex, Select } from "antd";
 import i18n from "@/utils/i18n/config";
@@ -49,6 +53,7 @@ const Header = ({ title }: Props) => {
   };
 
   useEffect(() => {
+    // dispatch(loadCurrentLang());
     handleChangeTitle();
   }, [currentPathName]);
 

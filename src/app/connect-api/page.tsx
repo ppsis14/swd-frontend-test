@@ -1,9 +1,11 @@
+"use client";
+import Header from "@/components/Header";
 import React from "react";
 
 type Props = {};
 
 const page = (props: Props) => {
-  return <div>Connect api</div>;
+  return <Header />;
 };
 
 export default page;

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { UserType, userSelector } from "@/stores/slices/userSlice";
+import reducer, { UserType, userSelector } from "@/stores/slices/userSlice";
 import { useAppDispatch, RootState } from "@/stores/store";
 import { useSelector } from "react-redux";
 import {
@@ -65,7 +65,6 @@ const page = (props: Props) => {
   const [form] = Form.useForm();
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
 
   const columns = [
     {
@@ -75,6 +74,8 @@ const page = (props: Props) => {
       render: (_, { firstName, lastName }: DataSourceType) => (
         <p>{`${firstName} ${lastName}`}</p>
       ),
+      sorter: (a, b) =>
+        (a.firstName + a.lastName).length - (b.firstName + b.lastName).length,
     },
     {
       title: t("formPage.table.column.gender"),
@@ -83,6 +84,7 @@ const page = (props: Props) => {
       render: (_, { gender }: DataSourceType) => (
         <p>{t(`formPage.form.gender.options.${gender}`)}</p>
       ),
+      sorter: (a, b) => a.gender - b.gender,
     },
     {
       title: t("formPage.table.column.mobilePhone"),
@@ -93,6 +95,7 @@ const page = (props: Props) => {
           record.mobilePhone.phone
         }`}</p>
       ),
+      sorter: (a, b) => a.mobilePhone.phone.length - b.mobilePhone.phone.length,
     },
     {
       title: t("formPage.table.column.nationality"),
@@ -101,6 +104,7 @@ const page = (props: Props) => {
       render: (_, { nationality }: DataSourceType) => (
         <p>{t(`formPage.form.nationality.options.${nationality}`)}</p>
       ),
+      sorter: (a, b) => a.nationality.length - b.nationality.length,
     },
     {
       title: t("formPage.table.column.manage"),
@@ -141,7 +145,7 @@ const page = (props: Props) => {
   ];
   const genderOptions = [
     { value: "male", label: t("formPage.form.gender.options.male") },
-    { value: "female.", label: t("formPage.form.gender.options.female") },
+    { value: "female", label: t("formPage.form.gender.options.female") },
     { value: "unisex", label: t("formPage.form.gender.options.unisex") },
   ];
 
@@ -153,91 +157,91 @@ const page = (props: Props) => {
 
   const rowSelection: TableProps<DataSourceType>["rowSelection"] = {
     selectedRowKeys,
-    onChange: (
-      selectedRowKeys: React.Key[],
-      selectedRows: DataSourceType[]
-    ) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
-      );
+    onChange: (selectedRowKeys: React.Key[]) => {
       setSelectedRowKeys(selectedRowKeys);
+      console.log("selectedRowKeys:", selectedRowKeys);
+
+      if (selectedRowKeys.length === userReducer.dataSource.length) {
+        dispatch(setSelectedAll({ value: true }));
+      } else if (
+        selectedRowKeys.length !== userReducer.dataSource.length &&
+        userReducer.isSelectedAll
+      ) {
+        dispatch(setSelectedAll({ value: false }));
+      }
     },
   };
 
   const hasSelected = selectedRowKeys.length > 0;
 
   const onTitleChange = (value: string) => {
-    console.log(`selected ${value}`);
     dispatch(setTitle({ value }));
   };
   const onFirstNameChange: InputProps["onChange"] = (e) => {
-    console.log(`firstnam: ${e.target.value}`);
     dispatch(setFirstName({ value: e.target.value }));
   };
   const onLastNameChange: InputProps["onChange"] = (e) => {
-    console.log(`lastname: ${e.target.value}`);
     dispatch(setLastName({ value: e.target.value }));
   };
   const onBirthDateChange = (value) => {
-    console.log("date:", value, dayjs(value).format("YYYY-MM-DD"));
-    dispatch(setBirthDate({ value }));
+    dispatch(setBirthDate({ value: dayjs(value).format("YYYY-MM-DD") }));
   };
   const onNationalityChange = (value: string) => {
-    console.log(`selected ${value}`);
     dispatch(setNationality({ value }));
   };
   const onGenderChange = (e: RadioChangeEvent) => {
-    console.log(`radio checked:${e.target.value}`);
     dispatch(setGender({ value: e.target.value }));
   };
   const onCitizenIdFirstChange: InputProps["onChange"] = (e) => {
-    console.log(`onCitizenIdFirstChange: ${e.target.value}`);
     dispatch(setCitizenIdFirst({ value: e.target.value }));
   };
   const onCitizenIdSecondChange: InputProps["onChange"] = (e) => {
-    console.log(`onCitizenIdSecondChange: ${e.target.value}`);
     dispatch(setCitizenIdSecond({ value: e.target.value }));
   };
   const onCitizenIdThirdChange: InputProps["onChange"] = (e) => {
-    console.log(`onCitizenIdThirdChange: ${e.target.value}`);
     dispatch(setCitizenIdThird({ value: e.target.value }));
   };
   const onCitizenIdFourthChange: InputProps["onChange"] = (e) => {
-    console.log(`onCitizenIdFourthChange: ${e.target.value}`);
     dispatch(setCitizenIdFourth({ value: e.target.value }));
   };
   const onCitizenIdFifthChange: InputProps["onChange"] = (e) => {
-    console.log(`onCitizenIdFifthChange: ${e.target.value}`);
     dispatch(setCitizenIdFifth({ value: e.target.value }));
   };
   const onCountryCodeChange = (value: string) => {
-    console.log(`selected ${value}`);
     dispatch(setPhoneCountryCode({ value }));
   };
   const onPhoneNumberChange: InputProps["onChange"] = (e) => {
-    console.log(`phone no: ${e.target.value}`);
     dispatch(setPhoneNumber({ value: e.target.value }));
   };
   const onPassportNoChange: InputProps["onChange"] = (e) => {
-    console.log(`passportNo: ${e.target.value}`);
     dispatch(setPassportNo({ value: e.target.value }));
   };
   const onExpectedSalaryChange: InputProps["onChange"] = (e) => {
-    console.log(`expectedSalary: ${e.target.value}`);
     dispatch(setExpectedSalary({ value: e.target.value }));
   };
 
   const onCheckAllChange: CheckboxProps["onChange"] = (e) => {
-    console.log("before:", userReducer.isSelectedAll);
     dispatch(setSelectedAll({ value: e.target.checked }));
+
+    if (e.target.checked)
+      setSelectedRowKeys(userReducer.dataSource.map(({ key }) => key));
+    else setSelectedRowKeys([]);
   };
 
   const onSubmit = () => {
-    console.log(userReducer.formData);
-    dispatch(addUser(userReducer.formData));
-    form.resetFields();
+    if (userReducer.formData.id) {
+      dispatch(
+        updateUser({
+          id: userReducer.formData.id,
+          updatedData: userReducer.formData,
+        })
+      );
+    } else {
+      dispatch(addUser({ userData: userReducer.formData }));
+    }
+
+    onReset();
+    alert("Save success");
   };
 
   const onReset = () => {
@@ -245,92 +249,35 @@ const page = (props: Props) => {
     form.resetFields();
   };
 
-  const initDataSource = (userData: UserType[]) => {
-    // return userData
-    //   ? userData.map(
-    //       ({ id, firstName, lastName, mobilePhone, ...data }: UserType) => ({
-    //         ...data,
-    //         key: id,
-    //         // name: `${firstName} ${lastName}`,
-    //         // mobilePhoneNumber: mobilePhone.phone,
-    //       })
-    //     )
-    //   : [];
+  const handleDeleteUser = (keys: React.Key[] | string) => {
+    let ids = typeof keys === "string" ? [keys] : keys;
 
-    setDataSource([
-      {
-        key: "1",
-        title: "mr",
-        firstName: "Smith",
-        lastName: "Test",
-        birthDate: "2025-10-03",
-        nationality: "thai",
-        gender: "male",
-        mobilePhone: {
-          country: "th",
-          phone: "987654321",
-        },
-        expectedSalary: "40000",
-        citizenId: {
-          first: "1",
-          second: "1234",
-          third: "12345",
-          fourth: "12",
-          fifth: "1",
-        },
-        passportNo: "0000000000000",
-      },
-      {
-        key: "2",
-        title: "mr",
-        firstName: "Smith2",
-        lastName: "Test2",
-        birthDate: "2025-10-02",
-        nationality: "french",
-        gender: "female",
-        mobilePhone: {
-          country: "fr",
-          phone: "987654321",
-        },
-        expectedSalary: "50000",
-        citizenId: {
-          first: "1",
-          second: "2222",
-          third: "44444",
-          fourth: "11",
-          fifth: "7",
-        },
-        passportNo: "0000000000000",
-      },
-    ]);
-  };
-  const handleDeleteAllUser = () => {
     if (
       userReducer.isSelectedAll ||
-      selectedRowKeys.length === dataSource.length
+      selectedRowKeys.length === userReducer.dataSource.length
     ) {
+      console.log("delete all");
+
       dispatch(deleteAllUsers());
       dispatch(setSelectedAll({ value: false }));
       setSelectedRowKeys([]);
-    } else if (hasSelected) {
-      handleDeleteUser(selectedRowKeys);
+    } else {
+      console.log("delete select");
+
+      dispatch(deleteUser({ ids }));
+
+      let currentSelectedRowKeys = selectedRowKeys.filter(
+        (keys) => !ids.includes(keys)
+      );
+      console.log("currentSelectedRowKeys:", currentSelectedRowKeys);
+
+      setSelectedRowKeys(currentSelectedRowKeys);
     }
-  };
 
-  const handleDeleteUser = (ids: React.Key[] | string) => {
-    dispatch(deleteUser({ ids }));
+    if (userReducer.formData.id && ids.includes(userReducer.formData.id))
+      onReset();
 
-    // const notSelectedData =  dataSource.filter(
-    //   (data) => !selectedRowKeys.includes(data.key)
-    // );
-
-    // const deleteItems = await dataSource.filter((data) =>
-    //   selectedRowKeys.includes(data.key)
-    // );
-
-    //  setDataSource(notSelectedData);
-
-    // setSelectedRowKeys([]);
+    alert("Delete success");
   };
 
   const handleEditUser = ({ key, ...record }: DataSourceType) => {
@@ -376,10 +323,10 @@ const page = (props: Props) => {
 
   useEffect(() => {
     dispatch(loadUsers());
-    if (userReducer.data) {
-      initDataSource(userReducer.data);
-    }
   }, []);
+
+  console.log("userData:", userReducer.dataSource);
+
   return (
     <>
       <Header />
@@ -449,7 +396,7 @@ const page = (props: Props) => {
             </Form.Item>
           </Space>
 
-          <Form.Item name="gender" label="Gender">
+          <Form.Item name="gender" label="Gender" rules={[{ required: true }]}>
             <Radio.Group onChange={onGenderChange} options={genderOptions} />
           </Form.Item>
           <Space size="small" align="start">
@@ -547,18 +494,21 @@ const page = (props: Props) => {
             >
               {t("formPage.checkbox.selectAll")}
             </Checkbox>
-            <Button size="small" onClick={handleDeleteAllUser}>
+            <Button
+              size="small"
+              onClick={() => handleDeleteUser(selectedRowKeys)}
+            >
               {t("formPage.button.delete")}
             </Button>
           </Space>
           <Table
             size="small"
-            dataSource={dataSource}
+            dataSource={userReducer.dataSource}
             columns={columns}
             pagination={{
               size: "small",
               position: ["topRight"],
-              pageSize: 5,
+              pageSize: 2,
               itemRender: (_, type, originalElement) => {
                 if (type === "prev") {
                   return (

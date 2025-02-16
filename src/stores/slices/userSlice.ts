@@ -1,6 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { v1 as uuidv1 } from "uuid";
+import {
+  getDataFromLocalStorage,
+  getDataSource,
+  removeDataFromLocalStorage,
+  setDataToLocalStorage,
+} from "@/utils/form";
 
 type MobilePhoneType = {
   country: string;
@@ -28,10 +34,15 @@ export type UserType = {
   expectedSalary: string;
 };
 
+export type DataSourceType = Omit<UserType, "id"> & {
+  key: string;
+};
+
 export type userState = {
   isSelectedAll: boolean;
   data: UserType[];
   formData: UserType;
+  dataSource: DataSourceType[];
 };
 
 const initialState: userState = {
@@ -59,6 +70,7 @@ const initialState: userState = {
     },
     passportNo: "",
   },
+  dataSource: [],
 };
 
 const userSlice = createSlice({
@@ -66,70 +78,68 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     loadUsers(state) {
-      const userData = localStorage.getItem("user");
+      const userData = getDataFromLocalStorage("user");
+
       if (userData) {
-        const { data, formData } = JSON.parse(userData);
-        state.data = data;
-        state.formData = formData;
-      } else {
-        console.log("loadUsers empty data");
+        state.data = userData;
       }
+
+      let dataSource = getDataSource(state.data);
+      state.dataSource = dataSource;
     },
     addUser: (state, action) => {
       let newData = action.payload.userData;
       let id = uuidv1();
       state.data.push({ ...newData, id });
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          formData: state.formData,
-          data: state.data,
-        })
-      );
+
+      let dataSource = getDataSource(state.data);
+      state.dataSource = dataSource;
+
+      setDataToLocalStorage("user", state.data);
     },
     updateUser: (state, action) => {
-      let userIndex = state.data.findIndex(
-        ({ id }) => id === action.payload.id
-      );
-      if (userIndex > -1) {
-        state.data.splice(userIndex, action.payload.updatedData);
-      }
+      let currData = [...state.data];
+      let userIndex = currData.findIndex(({ id }) => id === action.payload.id);
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          formData: state.formData,
-          data: state.data,
-        })
-      );
+      console.log("userIndex:", userIndex);
+      if (userIndex > -1) {
+        currData.splice(userIndex, 1, action.payload.updatedData);
+        state.data = currData;
+
+        let dataSource = getDataSource(state.data);
+        state.dataSource = dataSource;
+
+        setDataToLocalStorage("user", state.data);
+      }
     },
     deleteUser: (state, action) => {
+      console.log("deleteUser");
+
       state.data = state.data.filter(
         ({ id }) => !action.payload.ids.includes(id)
       );
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          formData: state.formData,
-          data: state.data,
-        })
-      );
+
+      let dataSource = getDataSource(state.data);
+      state.dataSource = dataSource;
+
+      if (state.dataSource.length > 0)
+        setDataToLocalStorage("user", state.data);
+      else removeDataFromLocalStorage("user");
     },
     deleteAllUsers: (state) => {
       state.data = [];
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          formData: state.formData,
-          data: state.data,
-        })
-      );
+
+      let dataSource = getDataSource(state.data);
+      state.dataSource = dataSource;
+
+      removeDataFromLocalStorage("user");
     },
     setSelectedAll: (state, action) => {
       state.isSelectedAll = action.payload.value;
     },
     setFormData: (state, action) => {
       state.formData = action.payload.formData;
+      setDataToLocalStorage("form", action.payload.formData);
     },
     resetFormData: (state) => {
       state.formData = {
@@ -154,6 +164,8 @@ const userSlice = createSlice({
         },
         passportNo: "",
       };
+
+      removeDataFromLocalStorage("form");
     },
     setTitle: (state, action) => {
       state.formData.title = action.payload.value;
