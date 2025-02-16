@@ -257,20 +257,6 @@ const page = (props: Props) => {
         alert("Save failed, please fill all required fields");
         return;
       });
-
-    // if (userReducer.formData.id) {
-    //   dispatch(
-    //     updateUser({
-    //       id: userReducer.formData.id,
-    //       updatedData: userReducer.formData,
-    //     })
-    //   );
-    // } else {
-    //   dispatch(addUser({ userData: userReducer.formData }));
-    // }
-
-    // onReset();
-    // alert("Save success");
   };
 
   const onReset = () => {
