@@ -109,7 +109,6 @@ const page = (props: Props) => {
 
   return (
     <>
-      {/* <Header title={title} /> */}
       <Header />
       <Flex className="menu-wrapper" gap="middle" justify="center">
         <Flex
