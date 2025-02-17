@@ -121,7 +121,7 @@ const page = (props: Props) => {
           <Button
             type="text"
             size="small"
-            onClick={() => handleDeleteUser(record.key)}
+            onClick={() => handleDeleteUserInRow(record.key)}
           >
             {t("formPage.button.delete")}
           </Button>
@@ -264,6 +264,21 @@ const page = (props: Props) => {
     form.resetFields();
   };
 
+  const handleDeleteUserInRow = (keys: string) => {
+    let ids: React.Key[] = [keys];
+    dispatch(deleteUser({ ids }));
+
+    let currentSelectedRowKeys = selectedRowKeys.filter(
+      (keys) => !ids.includes(keys)
+    );
+
+    setSelectedRowKeys(currentSelectedRowKeys);
+
+    if (userReducer.formData.id && ids.includes(userReducer.formData.id))
+      onReset();
+
+    alert("Delete success");
+  };
   const handleDeleteUser = (keys: React.Key[] | string) => {
     let ids = typeof keys === "string" ? [keys] : keys;
 
