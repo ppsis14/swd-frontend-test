@@ -60,7 +60,7 @@ $color-shape: #878787;
   margin-top: 0px !important;
 }
 .form-wrapper {
-  padding: 1rem;
+  padding: 1rem !important;
   border: 1px solid black;
   border-radius: 14px;
   height: fit-content;
@@ -78,7 +78,7 @@ $color-shape: #878787;
 .menu {
   cursor: pointer;
   height: fit-content;
-  border-radius: 0;
+  border-radius: 0 !important;
   width: 250px;
   min-width: fit-content;
 

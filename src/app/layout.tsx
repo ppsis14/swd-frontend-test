@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import "./style.scss";
 import ReduxProvider from "@/components/ReduxProvider";
+import { AntdRegistry } from "@ant-design/nextjs-registry";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,9 +30,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ReduxProvider>
-          <div className="page">
-            <main className="main">{children}</main>
-          </div>
+          <AntdRegistry>
+            <div className="page">
+              <main className="main">{children}</main>
+            </div>
+          </AntdRegistry>
         </ReduxProvider>
       </body>
     </html>
